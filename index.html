@@ -15,19 +15,19 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
-            --primary-color: #FF6B8B;
-            --secondary-color: #6A11CB;
-            --accent-color: #00B4DB;
-            --accent-dark: #0083B0;
-            --success-color: #00D2A0;
-            --warning-color: #FF9E6D;
-            --light-color: #FFF9F0;
-            --dark-color: #2D3047;
-            --shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            --primary-color: #2E8B57; /* لون أخضر مميز */
+            --secondary-color: #1E3A8A; /* أزرق غامق أنيق */
+            --accent-color: #DC2626; /* أحمر مميز */
+            --accent-dark: #B91C1C;
+            --success-color: #059669; /* أخضر داكن */
+            --warning-color: #F59E0B; /* برتقالي ذهبي */
+            --light-color: #FEFCE8; /* أصفر فاتح ناعم */
+            --dark-color: #1F2937; /* رمادي داكن */
+            --shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
             --border-radius: 20px;
-            --gradient: linear-gradient(135deg, #FF6B8B 0%, #6A11CB 100%);
-            --gradient-accent: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);
-            --gradient-success: linear-gradient(135deg, #00D2A0 0%, #00B894 100%);
+            --gradient: linear-gradient(135deg, #2E8B57 0%, #1E3A8A 100%);
+            --gradient-accent: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            --gradient-success: linear-gradient(135deg, #059669 0%, #047857 100%);
         }
         
         * {
@@ -38,7 +38,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #FFF9F0 0%, #FFE8D6 100%);
+            background: linear-gradient(135deg, #FEFCE8 0%, #FEF3C7 100%);
             color: var(--dark-color);
             line-height: 1.6;
             min-height: 100vh;
@@ -50,85 +50,21 @@
             overflow-x: hidden;
         }
         
-        /* نافذة الموافقة */
+        /* إزالة نافذة الموافقة من العرض */
         .consent-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
+            display: none !important;
         }
         
-        .consent-content {
-            background: white;
-            padding: 40px;
-            border-radius: var(--border-radius);
-            max-width: 600px;
-            width: 90%;
-            text-align: center;
-            box-shadow: var(--shadow);
-            border: 4px solid var(--primary-color);
-            position: relative;
-        }
-        
-        .consent-title {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            font-weight: 900;
-        }
-        
-        .consent-text {
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--dark-color);
-        }
-        
-        .consent-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-        
-        .consent-btn {
-            padding: 15px 35px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 150px;
-        }
-        
-        .consent-accept {
-            background: var(--gradient-success);
-            color: white;
-        }
-        
-        .consent-deny {
-            background: #FF6B8B;
-            color: white;
-        }
-        
-        .consent-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        /* إخفاء رابط لوحة التحكم */
+        .admin-link {
+            display: none !important;
         }
         
         /* عناصر ميمز */
         .meme-element {
             position: absolute;
             z-index: -1;
-            opacity: 0.15;
+            opacity: 0.1;
             pointer-events: none;
         }
         
@@ -172,7 +108,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             font-weight: bold;
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.2;
         }
         
         .floating-1 {
@@ -228,7 +164,7 @@
             font-size: 3rem;
             color: var(--primary-color);
             margin-left: 15px;
-            filter: drop-shadow(0 5px 10px rgba(255, 107, 139, 0.3));
+            filter: drop-shadow(0 5px 10px rgba(46, 139, 87, 0.3));
         }
         
         .logo {
@@ -248,7 +184,7 @@
             background: white;
             padding: 6px 20px;
             border-radius: 50px;
-            border: 3px dashed var(--accent-color);
+            border: 3px solid var(--accent-color);
             margin-top: 8px;
             display: inline-block;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -274,14 +210,14 @@
             border-radius: 50px;
             display: inline-block;
             box-shadow: var(--shadow);
-            border: 3px dashed var(--primary-color);
+            border: 3px solid var(--primary-color);
             position: relative;
             overflow: hidden;
             margin-top: 15px;
         }
         
         .subtitle::before {
-            content: "🔥";
+            content: "🎓";
             position: absolute;
             left: -12px;
             top: 50%;
@@ -290,7 +226,7 @@
         }
         
         .subtitle::after {
-            content: "💯";
+            content: "✨";
             position: absolute;
             right: -12px;
             top: 50%;
@@ -363,7 +299,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: linear-gradient(to right, #FFE8D6, white);
+            background: linear-gradient(to right, #FEF3C7, white);
             padding: 8px 12px;
             border-radius: 10px;
             border-right: 4px solid var(--accent-color);
@@ -377,11 +313,11 @@
             width: 100%;
             padding: 18px 25px;
             padding-right: 60px;
-            border: 3px solid #FFD1DC;
+            border: 3px solid #D1FAE5;
             border-radius: 12px;
             font-size: 1.1rem;
             transition: all 0.3s ease;
-            background-color: #FFF9F0;
+            background-color: #FEFCE8;
             color: var(--dark-color);
             font-weight: 600;
         }
@@ -390,7 +326,7 @@
             outline: none;
             border-color: var(--accent-color);
             background-color: white;
-            box-shadow: 0 0 0 4px rgba(0, 180, 219, 0.2);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
             transform: translateY(-3px);
         }
         
@@ -422,7 +358,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 25px rgba(0, 180, 219, 0.3);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.15);
             position: relative;
             overflow: hidden;
             text-transform: uppercase;
@@ -431,7 +367,7 @@
         
         .submit-btn:hover {
             transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0, 180, 219, 0.4);
+            box-shadow: 0 15px 35px rgba(220, 38, 38, 0.2);
         }
         
         .submit-btn:active {
@@ -479,10 +415,10 @@
             right: 20px;
             width: calc(100% - 40px);
             height: 8px;
-            background: linear-gradient(90deg, #FF6B8B, #6A11CB, #00B4DB);
+            background: linear-gradient(90deg, #2E8B57, #1E3A8A, #DC2626);
             border-radius: 8px;
             z-index: 1;
-            box-shadow: 0 3px 10px rgba(106, 17, 203, 0.3);
+            box-shadow: 0 3px 10px rgba(30, 58, 138, 0.2);
         }
         
         /* محطات على الخط */
@@ -506,32 +442,32 @@
         
         .stop-1 { 
             right: 0%; 
-            border-color: #FF6B8B;
-            color: #FF6B8B;
+            border-color: #2E8B57;
+            color: #2E8B57;
         }
         
         .stop-2 { 
             right: 25%; 
-            border-color: #FF9E6D;
-            color: #FF9E6D;
+            border-color: #059669;
+            color: #059669;
         }
         
         .stop-3 { 
             right: 50%; 
-            border-color: #6A11CB;
-            color: #6A11CB;
+            border-color: #1E3A8A;
+            color: #1E3A8A;
         }
         
         .stop-4 { 
             right: 75%; 
-            border-color: #00B4DB;
-            color: #00B4DB;
+            border-color: #DC2626;
+            color: #DC2626;
         }
         
         .stop-5 { 
             right: 100%; 
-            border-color: #00D2A0;
-            color: #00D2A0;
+            border-color: #F59E0B;
+            color: #F59E0B;
         }
         
         .stop-label {
@@ -553,7 +489,7 @@
             background: var(--gradient-success);
             color: white;
             transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 210, 160, 0.4);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
         }
         
         .stop-icon {
@@ -594,7 +530,7 @@
             text-align: center;
             display: none;
             border: 4px solid var(--success-color);
-            box-shadow: 0 12px 30px rgba(0, 210, 160, 0.2);
+            box-shadow: 0 12px 30px rgba(5, 150, 105, 0.15);
             position: relative;
             overflow: hidden;
         }
@@ -605,7 +541,7 @@
             top: -25px;
             right: -25px;
             font-size: 6rem;
-            opacity: 0.2;
+            opacity: 0.1;
             transform: rotate(15deg);
             z-index: 0;
         }
@@ -620,28 +556,20 @@
         
         /* رسالة الخطأ */
         .error-message {
-            background: #FFE8E8;
-            color: #D32F2F;
+            background: #FEE2E2;
+            color: #DC2626;
             padding: 12px;
             border-radius: 10px;
             margin-top: 12px;
             text-align: center;
             display: none;
-            border: 3px solid #FF6B6B;
+            border: 3px solid #DC2626;
             font-weight: 600;
         }
         
-        /* رسالة الموقع */
+        /* رسالة الموقع - مخفية */
         .location-message {
-            background: #E8F4FD;
-            color: var(--accent-color);
-            padding: 12px;
-            border-radius: 10px;
-            margin-top: 12px;
-            text-align: center;
-            display: none;
-            border: 3px solid var(--accent-color);
-            font-weight: 600;
+            display: none !important;
         }
         
         /* قاعدة البيانات */
@@ -652,7 +580,7 @@
             transform: translateY(-50%);
             font-size: 2.8rem;
             color: var(--dark-color);
-            opacity: 0.3;
+            opacity: 0.2;
             z-index: 0;
         }
         
@@ -665,12 +593,12 @@
             background: white;
             padding: 12px 20px;
             border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            border: 3px dashed var(--primary-color);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            border: 3px solid var(--primary-color);
         }
         
         .meme-text span {
-            color: var(--primary-color);
+            color: var(--accent-color);
             font-size: 1.3rem;
             margin: 0 8px;
         }
@@ -695,7 +623,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0, 180, 219, 0.05), transparent);
+            background: linear-gradient(45deg, transparent, rgba(220, 38, 38, 0.03), transparent);
             transform: rotate(45deg);
             z-index: 0;
         }
@@ -703,7 +631,7 @@
         .developers {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 3px dashed var(--primary-color);
+            border-top: 3px solid var(--primary-color);
             line-height: 1.8;
             display: flex;
             justify-content: center;
@@ -718,15 +646,15 @@
             align-items: center;
             gap: 15px;
             padding: 15px 20px;
-            background: #FFF9F0;
+            background: #FEFCE8;
             border-radius: 12px;
             border: 3px solid;
             transition: all 0.3s ease;
         }
         
         .dev-item:hover {
-            transform: translateY(-6px) rotate(1deg);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
         }
         
         .dev-1 {
@@ -749,30 +677,6 @@
             color: var(--secondary-color);
         }
         
-        /* روابط إضافية */
-        .admin-link {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--gradient);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .admin-link:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
-        }
-        
         /* تصميم متجاوب للهواتف */
         @media (max-width: 1024px) {
             .main-content {
@@ -786,13 +690,6 @@
             
             .meme-path {
                 height: 220px;
-            }
-            
-            .admin-link {
-                bottom: 15px;
-                left: 15px;
-                padding: 10px 15px;
-                font-size: 0.9rem;
             }
         }
         
@@ -849,23 +746,6 @@
             .meme-element, .floating-text {
                 display: none;
             }
-            
-            .consent-content {
-                padding: 25px;
-            }
-            
-            .consent-title {
-                font-size: 1.6rem;
-            }
-            
-            .consent-text {
-                font-size: 1rem;
-            }
-            
-            .consent-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
         }
         
         @media (max-width: 480px) {
@@ -921,32 +801,8 @@
     </style>
 </head>
 <body>
-    <!-- نافذة الموافقة -->
-    <div class="consent-modal" id="consentModal">
-        <div class="consent-content">
-            <h2 class="consent-title">مرحباً بك في نظام تسجيل بيانات الطلبة! 👋</h2>
-            <div class="consent-text">
-                <p>عزيزي الطالب،</p>
-                <p>نرحب بك في نظام تسجيل بيانات كلية مزايا المسائية. لاستخدام هذا النظام، نحتاج موافقتك على:</p>
-                <ul style="text-align: right; margin: 15px 0; padding-right: 20px;">
-                    <li>جمع بياناتك الشخصية للتسجيل</li>
-                    <li>تحديد موقعك الجغرافي لتحسين الخدمة</li>
-                    <li>تخزين بياناتك في قاعدة البيانات الآمنة</li>
-                </ul>
-                <p>بياناتك محمية ولا يتم مشاركتها مع أي طرف ثالث.</p>
-            </div>
-            <div class="consent-buttons">
-                <button class="consent-btn consent-accept" id="acceptConsent">أوافق ومستعد للتسجيل ✅</button>
-                <button class="consent-btn consent-deny" id="denyConsent">لا أوافق، أرغب في الخروج ❌</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- رابط لوحة التحكم -->
-    <a href="dashboard.html" class="admin-link">
-        <i class="fas fa-tachometer-alt"></i>
-        لوحة التحكم
-    </a>
+    <!-- تم إزالة نافذة الموافقة -->
+    <!-- تم إزالة رابط لوحة التحكم -->
 
     <!-- عناصر ميمز في الخلفية -->
     <div class="meme-element meme-1">🎓</div>
@@ -956,7 +812,7 @@
     
     <div class="floating-text floating-1">آمن وسريع 🔒</div>
     <div class="floating-text floating-2">سهل وسريع ⚡</div>
-    <div class="floating-text floating-3">ميمز التعليم 👨‍🎓</div>
+    <div class="floating-text floating-3">التعليم الذكي 👨‍🎓</div>
     
     <div class="container">
         <header>
@@ -981,7 +837,7 @@
                             الاسم الثلاثي
                         </label>
                         <div class="input-container">
-                            <input type="text" id="fullName" name="fullName" placeholder="اكتب اسمك الثلاثي يلمهندس" required>
+                            <input type="text" id="fullName" name="fullName" placeholder="اكتب اسمك الثلاثي" required>
                             <div class="input-icon">
                                 <i class="fas fa-user-circle"></i>
                             </div>
@@ -994,7 +850,7 @@
                             رقم الهاتف
                         </label>
                         <div class="input-container">
-                            <input type="tel" id="phone" name="phone" placeholder="اكتب رقمك حته نتصل عليك" required>
+                            <input type="tel" id="phone" name="phone" placeholder="اكتب رقم هاتفك" required>
                             <div class="input-icon">
                                 <i class="fas fa-phone"></i>
                             </div>
@@ -1007,7 +863,7 @@
                             اسمك في التليجرام
                         </label>
                         <div class="input-container">
-                            <input type="text" id="telegramName" name="telegramName" placeholder="شنو اسمك على تليجرام؟" required>
+                            <input type="text" id="telegramName" name="telegramName" placeholder="اكتب اسمك في تليجرام" required>
                             <div class="input-icon">
                                 <i class="fas fa-signature"></i>
                             </div>
@@ -1020,7 +876,7 @@
                             يوزرك في التليجرام
                         </label>
                         <div class="input-container">
-                            <input type="text" id="telegramUsername" name="telegramUsername" placeholder="@yoursername اكتب يوزرك هناااااا" required>
+                            <input type="text" id="telegramUsername" name="telegramUsername" placeholder="@yoursername اكتب يوزرك هنا" required>
                             <div class="input-icon">
                                 <i class="fas fa-at"></i>
                             </div>
@@ -1028,12 +884,11 @@
                     </div>
                     
                     <button type="submit" class="submit-btn" id="submit-btn">
-                        <span>ارسال دوس هنا 🚀</span>
+                        <span>إرسال البيانات 🚀</span>
                         <i class="fas fa-paper-plane submit-icon"></i>
                     </button>
                     
                     <div id="error-message" class="error-message"></div>
-                    <div id="location-message" class="location-message"></div>
                     
                     <div id="success-message" class="success-message">
                         <div class="success-icon">
@@ -1093,7 +948,7 @@
                 
                 <div class="meme-text">
                     <span>📊</span> 
-                    مسار حفظ البيانات في جيبي 
+                    مسار حفظ البيانات في قاعدة البيانات 
                     <span>🔥</span>
                 </div>
             </div>
@@ -1121,10 +976,10 @@
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dotted var(--accent-color); font-size: 0.85rem;">
-                <p>© 2026  كلية مزايا مسائي - جميع الحقوق محفوظة اليه لحد يسرق</p>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--accent-color); font-size: 0.85rem;">
+                <p>© 2026 كلية مزايا مسائي - جميع الحقوق محفوظة</p>
                 <p style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">
-                    <i class="fas fa-heart" style="color: #FF6B8B;"></i> تم التطوير بكل جاي وكهوة
+                    <i class="fas fa-heart" style="color: #DC2626;"></i> تم التطوير بعناية واحترافية
                 </p>
                 <p style="margin-top: 5px; font-size: 0.75rem; color: var(--accent-color);">
                     <i class="fas fa-database"></i>  : Firebase Firestore
@@ -1152,247 +1007,16 @@
         console.log("Firebase تم التهيئة بنجاح!");
         
         // عناصر DOM
-        const consentModal = document.getElementById('consentModal');
-        const acceptConsent = document.getElementById('acceptConsent');
-        const denyConsent = document.getElementById('denyConsent');
         const form = document.getElementById('student-form');
         const submitBtn = document.getElementById('submit-btn');
         const successMessage = document.getElementById('success-message');
         const errorMessage = document.getElementById('error-message');
-        const locationMessage = document.getElementById('location-message');
         const studentIdElement = document.getElementById('student-id');
         const pathStops = document.querySelectorAll('.path-stop');
         const formInputs = document.querySelectorAll('input');
         
-        // بيانات الموقع الجغرافي
+        // بيانات الموقع الجغرافي (سيتم الحصول عليها تلقائياً بدون إشعارات)
         let userLocation = null;
-        let consentGiven = false;
-        let locationRequested = false;
-        let locationPromise = null;
-        
-        // إظهار نافذة الموافقة عند التحميل
-        window.addEventListener('load', () => {
-            const hasConsent = localStorage.getItem('collegeConsent');
-            if (!hasConsent) {
-                consentModal.style.display = 'flex';
-            } else {
-                consentGiven = true;
-                showLocationMessage('جاري محاولة تحديد موقعك...', 'info');
-                getLocation().catch(error => {
-                    console.log('تحديد الموقع فشل بعد الموافقة:', error.message);
-                    showLocationMessage('تحديد الموقع غير متاح. سيتم التسجيل بدون موقع.', 'warning');
-                });
-            }
-        });
-        
-        // قبول الموافقة
-        acceptConsent.addEventListener('click', () => {
-            consentModal.style.display = 'none';
-            localStorage.setItem('collegeConsent', 'true');
-            consentGiven = true;
-            showLocationMessage('جاري محاولة تحديد موقعك...', 'info');
-            getLocation().catch(error => {
-                console.log('تحديد الموقع فشل بعد الموافقة:', error.message);
-                showLocationMessage('تحديد الموقع غير متاح. سيتم التسجيل بدون موقع.', 'warning');
-            });
-        });
-        
-        // رفض الموافقة
-        denyConsent.addEventListener('click', () => {
-            alert('لا يمكنك استخدام النظام دون الموافقة على الشروط. سيتم إغلاق الصفحة.');
-            window.close();
-        });
-        
-        // الحصول على الموقع الجغرافي مع تحسينات
-        function getLocation() {
-            if (locationPromise) {
-                return locationPromise;
-            }
-            
-            if (!navigator.geolocation) {
-                throw new Error('المتصفح لا يدعم تحديد الموقع');
-            }
-            
-            locationPromise = new Promise((resolve, reject) => {
-                locationRequested = true;
-                
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000, // 10 ثواني بدلاً من 5
-                    maximumAge: 0
-                };
-                
-                const success = (position) => {
-                    userLocation = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        accuracy: position.coords.accuracy,
-                        timestamp: new Date().toISOString(),
-                        source: 'geolocation'
-                    };
-                    console.log('تم تحديد الموقع بنجاح:', userLocation);
-                    showLocationMessage('تم تحديد موقعك بنجاح! ✓', 'success');
-                    resolve(userLocation);
-                    
-                    // حفظ الموقع في Firebase في الخلفية
-                    saveLocationToFirebase();
-                };
-                
-                const error = (error) => {
-                    let errorMsg = 'خطأ غير معروف في تحديد الموقع';
-                    
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMsg = 'تم رفض إذن الموقع من قبل المستخدم';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMsg = 'معلومات الموقع غير متاحة';
-                            break;
-                        case error.TIMEOUT:
-                            errorMsg = 'انتهت مهلة طلب الموقع';
-                            break;
-                    }
-                    
-                    console.log('خطأ في تحديد الموقع:', errorMsg);
-                    
-                    // محاولة الحصول على الموقع عبر IP
-                    getLocationFromIP()
-                        .then(ipLocation => {
-                            userLocation = {
-                                ...ipLocation,
-                                source: 'ip',
-                                error: errorMsg,
-                                geolocationError: error.code
-                            };
-                            showLocationMessage('تم تحديد موقعك تقريبياً عبر الإنترنت', 'warning');
-                            resolve(userLocation);
-                            saveLocationToFirebase();
-                        })
-                        .catch(ipError => {
-                            userLocation = {
-                                error: errorMsg,
-                                ipError: ipError.message,
-                                timestamp: new Date().toISOString(),
-                                source: 'failed'
-                            };
-                            showLocationMessage('تعذر تحديد الموقع. سيتم التسجيل بدون موقع.', 'warning');
-                            resolve(userLocation);
-                            saveLocationToFirebase();
-                        });
-                };
-                
-                // إظهار رسالة للمستخدم
-                showLocationMessage('جاري تحديد موقعك... يرجى الانتظار', 'info');
-                
-                navigator.geolocation.getCurrentPosition(success, error, options);
-            });
-            
-            return locationPromise;
-        }
-        
-        // الحصول على الموقع التقريبي عبر IP
-        async function getLocationFromIP() {
-            try {
-                showLocationMessage('جاري الحصول على الموقع عبر الإنترنت...', 'info');
-                
-                // استخدام خدمة مجانية للحصول على الموقع عبر IP
-                const response = await fetch('https://ipapi.co/json/');
-                if (!response.ok) {
-                    throw new Error('فشل في الحصول على الموقع عبر IP');
-                }
-                
-                const data = await response.json();
-                
-                return {
-                    latitude: data.latitude,
-                    longitude: data.longitude,
-                    accuracy: 50000, // دقة منخفضة للموقع عبر IP
-                    city: data.city,
-                    country: data.country_name,
-                    ip: data.ip,
-                    timestamp: new Date().toISOString(),
-                    source: 'ipapi'
-                };
-            } catch (error) {
-                console.log('خطأ في الحصول على الموقع عبر IP:', error.message);
-                
-                // محاولة بديلة مع خدمة أخرى
-                try {
-                    const response = await fetch('https://geolocation-db.com/json/');
-                    if (response.ok) {
-                        const data = await response.json();
-                        return {
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            accuracy: 50000,
-                            city: data.city,
-                            country: data.country_name,
-                            ip: data.IPv4,
-                            timestamp: new Date().toISOString(),
-                            source: 'geolocation-db'
-                        };
-                    }
-                } catch (fallbackError) {
-                    console.log('فشلت المحاولة البديلة:', fallbackError.message);
-                }
-                
-                throw error;
-            }
-        }
-        
-        // حفظ الموقع في Firebase
-        async function saveLocationToFirebase() {
-            if (!userLocation || !consentGiven) return;
-            
-            try {
-                const locationData = {
-                    ...userLocation,
-                    userAgent: navigator.userAgent,
-                    pageUrl: window.location.href,
-                    consentTimestamp: localStorage.getItem('collegeConsentTimestamp') || new Date().toISOString(),
-                    savedAt: new Date().toISOString()
-                };
-                
-                await db.collection('locations').add(locationData);
-                console.log('تم حفظ الموقع الجغرافي في Firebase');
-            } catch (error) {
-                console.error('خطأ في حفظ الموقع:', error);
-            }
-        }
-        
-        // عرض رسالة الموقع
-        function showLocationMessage(message, type = 'info') {
-            locationMessage.textContent = message;
-            locationMessage.style.display = 'block';
-            
-            // تغيير الألوان حسب النوع
-            switch(type) {
-                case 'success':
-                    locationMessage.style.background = '#E8F5E9';
-                    locationMessage.style.color = '#2E7D32';
-                    locationMessage.style.borderColor = '#4CAF50';
-                    break;
-                case 'warning':
-                    locationMessage.style.background = '#FFF3E0';
-                    locationMessage.style.color = '#EF6C00';
-                    locationMessage.style.borderColor = '#FF9800';
-                    break;
-                case 'info':
-                default:
-                    locationMessage.style.background = '#E8F4FD';
-                    locationMessage.style.color = '#00B4DB';
-                    locationMessage.style.borderColor = '#00B4DB';
-            }
-            
-            // إخفاء الرسالة بعد 5 ثواني إذا كانت معلوماتية فقط
-            if (type === 'info') {
-                setTimeout(() => {
-                    if (locationMessage.textContent === message) {
-                        locationMessage.style.display = 'none';
-                    }
-                }, 5000);
-            }
-        }
         
         // تحديث المحطة النشطة عند تفاعل المستخدم
         function updateActiveStop(stopIndex) {
@@ -1423,11 +1047,11 @@
                 if (this.id === 'phone') {
                     const phonePattern = /^[\+]?[0-9]{10,15}$/;
                     if (this.value && !phonePattern.test(this.value)) {
-                        this.style.borderColor = '#FF6B8B';
-                        this.style.boxShadow = '0 0 0 5px rgba(255, 107, 139, 0.2)';
+                        this.style.borderColor = '#DC2626';
+                        this.style.boxShadow = '0 0 0 5px rgba(220, 38, 38, 0.1)';
                     } else if (this.value) {
-                        this.style.borderColor = '#00D2A0';
-                        this.style.boxShadow = '0 0 0 5px rgba(0, 210, 160, 0.2)';
+                        this.style.borderColor = '#059669';
+                        this.style.boxShadow = '0 0 0 5px rgba(5, 150, 105, 0.1)';
                     } else {
                         this.style.borderColor = '';
                         this.style.boxShadow = '';
@@ -1456,15 +1080,14 @@
         
         // دالة لإرجاع لون لكل حقل
         function getColorForField(index) {
-            const colors = ['#FF6B8B', '#FF9E6D', '#6A11CB', '#00B4DB'];
-            return colors[index] || '#00D2A0';
+            const colors = ['#2E8B57', '#059669', '#1E3A8A', '#DC2626'];
+            return colors[index] || '#F59E0B';
         }
         
         // دالة لإخفاء الرسائل
         function hideMessages() {
             successMessage.style.display = 'none';
             errorMessage.style.display = 'none';
-            locationMessage.style.display = 'none';
         }
         
         // دالة لإظهار رسالة الخطأ
@@ -1472,7 +1095,6 @@
             errorMessage.textContent = message;
             errorMessage.style.display = 'block';
             successMessage.style.display = 'none';
-            locationMessage.style.display = 'none';
             
             setTimeout(() => {
                 errorMessage.style.display = 'none';
@@ -1484,7 +1106,6 @@
             studentIdElement.textContent = `رقم التسجيل: ${studentId}`;
             successMessage.style.display = 'block';
             errorMessage.style.display = 'none';
-            locationMessage.style.display = 'none';
         }
         
         // توليد رقم تسجيل فريد
@@ -1494,23 +1115,52 @@
             return `STU-${timestamp}${random}`;
         }
         
+        // الحصول على الموقع الجغرافي (بدون إشعارات للمستخدم)
+        function getLocationSilently() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve(null);
+                    return;
+                }
+                
+                const options = {
+                    enableHighAccuracy: false, // دقة أقل لتكون أسرع
+                    timeout: 3000, // وقت انتظار قصير
+                    maximumAge: 300000 // 5 دقائق
+                };
+                
+                const success = (position) => {
+                    userLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: new Date().toISOString(),
+                        source: 'geolocation'
+                    };
+                    console.log('تم تحديد الموقع تلقائياً');
+                    resolve(userLocation);
+                };
+                
+                const error = () => {
+                    console.log('فشل التحديد التلقائي للموقع');
+                    resolve(null);
+                };
+                
+                navigator.geolocation.getCurrentPosition(success, error, options);
+            });
+        }
+        
         // إرسال النموذج إلى Firebase
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            if (!consentGiven) {
-                showError('❌ يجب الموافقة على الشروط أولاً!');
-                consentModal.style.display = 'flex';
-                return;
-            }
             
             // التحقق من صحة جميع الحقول
             let isValid = true;
             formInputs.forEach(input => {
                 if (!input.value.trim()) {
                     isValid = false;
-                    input.style.borderColor = '#FF6B8B';
-                    input.style.boxShadow = '0 0 0 5px rgba(255, 107, 139, 0.3)';
+                    input.style.borderColor = '#DC2626';
+                    input.style.boxShadow = '0 0 0 5px rgba(220, 38, 38, 0.1)';
                 }
             });
             
@@ -1524,14 +1174,14 @@
             const phoneInput = document.getElementById('phone');
             if (!phonePattern.test(phoneInput.value.trim())) {
                 showError('❌ يرجى إدخال رقم هاتف صحيح (10-15 رقمًا)');
-                phoneInput.style.borderColor = '#FF6B8B';
-                phoneInput.style.boxShadow = '0 0 0 5px rgba(255, 107, 139, 0.3)';
+                phoneInput.style.borderColor = '#DC2626';
+                phoneInput.style.boxShadow = '0 0 0 5px rgba(220, 38, 38, 0.1)';
                 return;
             }
             
             // تعطيل زر الإرسال وتغيير حالته
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span>🔄 جاري الحفظ   ...</span><i class="fas fa-spinner fa-spin submit-icon"></i>';
+            submitBtn.innerHTML = '<span>🔄 جاري الحفظ...</span><i class="fas fa-spinner fa-spin submit-icon"></i>';
             
             // تفعيل جميع المحطات
             pathStops.forEach((stop, index) => {
@@ -1540,19 +1190,10 @@
                 }, index * 300);
             });
             
-            // محاولة الحصول على الموقع إذا لم يكن لدينا
+            // محاولة الحصول على الموقع تلقائياً (بدون إشعارات)
             let finalLocation = userLocation;
-            if (!userLocation && !locationRequested) {
-                showLocationMessage('جاري محاولة الحصول على موقعك...', 'info');
-                try {
-                    finalLocation = await getLocation();
-                } catch (locationError) {
-                    console.log('فشل الحصول على الموقع قبل التسجيل:', locationError.message);
-                    finalLocation = {
-                        error: 'فشل في الحصول على الموقع',
-                        timestamp: new Date().toISOString()
-                    };
-                }
+            if (!finalLocation) {
+                finalLocation = await getLocationSilently();
             }
             
             // جمع البيانات
@@ -1594,7 +1235,7 @@
                         pathStops.forEach(stop => stop.classList.remove('active-stop'));
                         
                         // إعادة تعيين زر الإرسال
-                        submitBtn.innerHTML = '<span>ارسال البيانات 🚀</span><i class="fas fa-paper-plane submit-icon"></i>';
+                        submitBtn.innerHTML = '<span>إرسال البيانات 🚀</span><i class="fas fa-paper-plane submit-icon"></i>';
                         submitBtn.style.background = 'var(--gradient-accent)';
                         submitBtn.disabled = false;
                     }, 5000);
@@ -1605,7 +1246,7 @@
                 showError('❌ حدث خطأ في حفظ البيانات. يرجى المحاولة مرة أخرى.');
                 
                 // إعادة تعيين زر الإرسال
-                submitBtn.innerHTML = '<span>ارسال البيانات 🚀</span><i class="fas fa-paper-plane submit-icon"></i>';
+                submitBtn.innerHTML = '<span>إرسال البيانات 🚀</span><i class="fas fa-paper-plane submit-icon"></i>';
                 submitBtn.style.background = 'var(--gradient-accent)';
                 submitBtn.disabled = false;
                 pathStops.forEach(stop => stop.classList.remove('active-stop'));
@@ -1616,13 +1257,13 @@
         pathStops.forEach(stop => {
             stop.addEventListener('mouseenter', function() {
                 this.style.transform = 'translateY(-50%) scale(1.2)';
-                this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.25)';
+                this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.15)';
             });
             
             stop.addEventListener('mouseleave', function() {
                 if (!this.classList.contains('active-stop')) {
                     this.style.transform = 'translateY(-50%) scale(1)';
-                    this.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)';
+                    this.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.1)';
                 }
             });
         });
