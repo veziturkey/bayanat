@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK مع منع خرائط المصدر -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
@@ -50,40 +50,74 @@
             overflow-x: hidden;
         }
         
-        /* إخفاء نافذة الموافقة الخاصة بنا */
-        .consent-modal {
-            display: none !important;
-        }
-        
-        /* إخفاء رابط لوحة التحكم */
-        .admin-link {
-            display: none !important;
-        }
-        
-        /* رسالة توجيهية */
-        .location-hint {
+        /* شاشة تحميل */
+        .loading-overlay {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 15px 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             z-index: 9999;
-            border: 3px solid var(--accent-color);
-            font-weight: bold;
-            color: var(--secondary-color);
-            text-align: center;
-            display: none;
-            max-width: 90%;
-            animation: pulse 2s infinite;
+            transition: opacity 0.5s ease;
         }
         
-        @keyframes pulse {
-            0% { box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2); }
-            50% { box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4); }
-            100% { box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2); }
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 4px solid var(--primary-color);
+        }
+        
+        .loading-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+        
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .loading-progress {
+            width: 100%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--gradient);
+            border-radius: 5px;
+            transition: width 0.3s ease;
         }
         
         /* عناصر ميمز */
@@ -164,6 +198,8 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
         
         header {
@@ -822,9 +858,36 @@
     </style>
 </head>
 <body>
-    <!-- رسالة توجيهية للمستخدم -->
-    <div class="location-hint" id="locationHint">
-        ⚠️ يرجى الموافقة على طلب الموقع الذي سيظهر من المتصفح
+    <!-- شاشة تحميل تظهر أولاً -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-icon">
+                <i class="fas fa-location-dot"></i>
+            </div>
+            <h2 class="loading-title">تحميل نظام التسجيل</h2>
+            <div class="loading-text">
+                <p>جاري تحميل نظام التسجيل...</p>
+                <p id="locationMessage">سيتم طلب إذن الموقع الجغرافي قريباً</p>
+            </div>
+            <div class="loading-progress">
+                <div class="loading-bar" id="loadingBar"></div>
+            </div>
+            <p id="loadingStatus">جاري تهيئة النظام...</p>
+            <button id="skipLocationBtn" style="
+                background: var(--gradient-accent);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: bold;
+                cursor: pointer;
+                margin-top: 15px;
+                display: none;
+            ">
+                تخطي طلب الموقع والمتابعة
+            </button>
+        </div>
     </div>
 
     <!-- عناصر ميمز في الخلفية -->
@@ -837,7 +900,7 @@
     <div class="floating-text floating-2">سهل وسريع ⚡</div>
     <div class="floating-text floating-3">التعليم الذكي 👨‍🎓</div>
     
-    <div class="container">
+    <div class="container" id="mainContainer">
         <header>
             <div class="logo-container">
                 <div class="main-logo">
@@ -1012,6 +1075,14 @@
     </div>
 
     <script>
+        // إيقاف تحذيرات خرائط المصدر (غير مهمة)
+        console.warn = function() {
+            if (arguments[0] && arguments[0].includes && arguments[0].includes('source map')) {
+                return; // تجاهل تحذيرات خرائط المصدر
+            }
+            console.error.apply(console, arguments);
+        };
+
         // تهيئة Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyC1Gcttax01bsDQ7A-69ezY74ALhwjrxSo",
@@ -1023,14 +1094,13 @@
             measurementId: "G-B3C19X3CVN"
         };
 
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        console.log("Firebase تم التهيئة بنجاح!");
-        
         // عناصر DOM
-        const locationHint = document.getElementById('locationHint');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingStatus = document.getElementById('loadingStatus');
+        const locationMessage = document.getElementById('locationMessage');
+        const skipLocationBtn = document.getElementById('skipLocationBtn');
+        const mainContainer = document.getElementById('mainContainer');
         const form = document.getElementById('student-form');
         const submitBtn = document.getElementById('submit-btn');
         const successMessage = document.getElementById('success-message');
@@ -1042,38 +1112,93 @@
         // بيانات الموقع الجغرافي
         let userLocation = null;
         let locationPermissionGranted = false;
-        let locationRequestInProgress = false;
+        let locationTimeout = null;
         
-        // عند تحميل الصفحة، نطلب الموقع فوراً
-        window.addEventListener('load', () => {
-            // نطلب الموقع الجغرافي تلقائياً بعد تأخير بسيط
+        // دالة لتحديث شريط التقدم
+        function updateProgress(percentage, message, locationMsg = null) {
+            loadingBar.style.width = percentage + '%';
+            loadingStatus.textContent = message;
+            if (locationMsg) {
+                locationMessage.textContent = locationMsg;
+            }
+        }
+        
+        // دالة لإخفاء شاشة التحميل وإظهار المحتوى الرئيسي
+        function showMainContent() {
+            // تحديث التقدم
+            updateProgress(100, 'جاهز! يمكنك البدء في التسجيل', 'تم تحميل النظام بنجاح');
+            
+            // إخفاء زر التخطي
+            skipLocationBtn.style.display = 'none';
+            
+            // انتظار قليل ثم إخفاء شاشة التحميل
             setTimeout(() => {
-                requestLocationPermission();
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    mainContainer.style.opacity = '1';
+                }, 500);
             }, 1000);
-        });
+        }
         
-        // طلب إذن الموقع الجغرافي
-        function requestLocationPermission() {
-            if (locationRequestInProgress) return;
-            
-            locationRequestInProgress = true;
-            
-            // نعرض رسالة توجيهية للمستخدم
-            locationHint.style.display = 'block';
-            locationHint.innerHTML = '📍 جاري طلب إذن الموقع الجغرافي...';
-            
-            // نطلب الموقع الجغرافي مباشرة لجعل المتصفح يعرض طلب الموافقة
-            if (navigator.geolocation) {
+        // دالة للتحقق من إذن الموقع السابق
+        function checkPreviousPermission() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve('not_supported');
+                    return;
+                }
+                
+                // محاولة الحصول على الموقع بسرعة للتحقق من الإذن
+                navigator.geolocation.getCurrentPosition(
+                    () => resolve('granted'),
+                    (error) => {
+                        if (error.code === error.PERMISSION_DENIED) {
+                            resolve('denied');
+                        } else if (error.code === error.TIMEOUT) {
+                            resolve('timeout');
+                        } else {
+                            resolve('error');
+                        }
+                    },
+                    { timeout: 2000, maximumAge: 0 }
+                );
+            });
+        }
+        
+        // دالة لطلب إذن الموقع بطريقة محسنة
+        function requestLocationPermissionEnhanced() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve({ status: 'not_supported', location: null });
+                    return;
+                }
+                
+                updateProgress(70, 'جاري طلب إذن الموقع...', 'يرجى الموافقة على طلب الموقع من المتصفح');
+                
+                // إظهار زر التخطي بعد 3 ثواني
+                setTimeout(() => {
+                    skipLocationBtn.style.display = 'block';
+                }, 3000);
+                
+                // إعدادات محسنة لتحديد الموقع
                 const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
+                    enableHighAccuracy: false, // دقة أقل ولكن أسرع
+                    timeout: 15000, // 15 ثانية بدلاً من 10
+                    maximumAge: 60000 // استخدام بيانات موقع عمرها دقيقة واحدة كحد أقصى
                 };
                 
-                // نجعل المتصفح يطلب إذن الموقع
+                // إعادة تعيين المؤقت
+                if (locationTimeout) clearTimeout(locationTimeout);
+                locationTimeout = setTimeout(() => {
+                    console.log('انتهت مهلة طلب الموقع');
+                    resolve({ status: 'timeout', location: null });
+                }, 16000); // 16 ثانية (أكثر من timeout)
+                
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         // نجاح
+                        if (locationTimeout) clearTimeout(locationTimeout);
                         userLocation = {
                             latitude: position.coords.latitude,
                             longitude: position.coords.longitude,
@@ -1082,47 +1207,100 @@
                             source: 'geolocation'
                         };
                         locationPermissionGranted = true;
-                        locationHint.innerHTML = '✅ تم السماح بالوصول إلى الموقع بنجاح!';
-                        console.log('تم السماح بالوصول إلى الموقع:', userLocation);
-                        
-                        // إخفاء الرسالة بعد 3 ثواني
-                        setTimeout(() => {
-                            locationHint.style.display = 'none';
-                        }, 3000);
-                        
-                        locationRequestInProgress = false;
+                        updateProgress(85, 'تم تحديد الموقع بنجاح', 'تم السماح بالوصول إلى الموقع');
+                        resolve({ status: 'granted', location: userLocation });
                     },
                     (error) => {
                         // فشل
+                        if (locationTimeout) clearTimeout(locationTimeout);
                         console.log('فشل الحصول على إذن الموقع:', error.message);
                         
-                        // تحديد نوع الخطأ
-                        let message = '⚠️ لم يتم السماح بالوصول إلى الموقع';
+                        let status = 'error';
                         if (error.code === error.PERMISSION_DENIED) {
-                            message = '❌ تم رفض إذن الموقع. سيتم التسجيل بدون موقع';
+                            status = 'denied';
+                            updateProgress(85, 'تم رفض إذن الموقع', 'يمكنك المتابعة بدون تحديد الموقع');
                         } else if (error.code === error.TIMEOUT) {
-                            message = '⏱️ انتهت مهلة طلب الموقع';
+                            status = 'timeout';
+                            updateProgress(85, 'انتهت مهلة طلب الموقع', 'يمكنك المتابعة بدون تحديد الموقع');
+                        } else {
+                            updateProgress(85, 'تعذر تحديد الموقع', 'يمكنك المتابعة بدون تحديد الموقع');
                         }
                         
-                        locationHint.innerHTML = message;
-                        
-                        // إخفاء الرسالة بعد 5 ثواني
-                        setTimeout(() => {
-                            locationHint.style.display = 'none';
-                        }, 5000);
-                        
-                        locationRequestInProgress = false;
+                        resolve({ status: status, location: null });
                     },
                     options
                 );
-            } else {
-                locationHint.innerHTML = '❌ المتصفح لا يدعم تحديد الموقع';
-                setTimeout(() => {
-                    locationHint.style.display = 'none';
-                }, 3000);
-                locationRequestInProgress = false;
-            }
+            });
         }
+        
+        // بداية عملية التحميل
+        window.addEventListener('load', async () => {
+            try {
+                // الخطوة 1: تحميل Firebase
+                updateProgress(20, 'جاري تهيئة قاعدة البيانات...', 'جاري تحميل النظام');
+                
+                // تهيئة Firebase
+                firebase.initializeApp(firebaseConfig);
+                const db = firebase.firestore();
+                console.log("Firebase تم التهيئة بنجاح!");
+                
+                // اختبار الاتصال بقاعدة البيانات
+                try {
+                    await db.collection('testConnection').doc('test').get();
+                    updateProgress(40, 'تم الاتصال بقاعدة البيانات بنجاح', 'جاري التحضير...');
+                } catch (error) {
+                    console.log('ملاحظة: اختبار الاتصال بقاعدة البيانات:', error.message);
+                    updateProgress(40, 'تم تهيئة النظام', 'جاري التحضير...');
+                }
+                
+                // الخطوة 2: التحقق من إذن الموقع السابق
+                updateProgress(50, 'جاري التحقق من إعدادات الموقع...', 'جاري التحقق...');
+                
+                const permissionStatus = await checkPreviousPermission();
+                
+                if (permissionStatus === 'granted') {
+                    // إذا كان الإذن ممنوحاً مسبقاً، نحاول الحصول على الموقع بسرعة
+                    updateProgress(60, 'جاري تحديد موقعك...', 'المستخدم وافق مسبقاً على الموقع');
+                    
+                    const locationResult = await requestLocationPermissionEnhanced();
+                    if (locationResult.status === 'granted') {
+                        userLocation = locationResult.location;
+                        locationPermissionGranted = true;
+                    }
+                } else if (permissionStatus === 'denied') {
+                    // إذا كان الإذن مرفوضاً مسبقاً، نتخطى
+                    updateProgress(70, 'تم رفض إذن الموقع مسبقاً', 'سيتم التسجيل بدون موقع');
+                } else {
+                    // في حالات أخرى، نطلب إذن الموقع
+                    const locationResult = await requestLocationPermissionEnhanced();
+                    if (locationResult.status === 'granted') {
+                        userLocation = locationResult.location;
+                        locationPermissionGranted = true;
+                    }
+                }
+                
+                // الخطوة 3: إظهار المحتوى الرئيسي
+                showMainContent();
+                
+            } catch (error) {
+                console.error('خطأ في تهيئة النظام:', error);
+                updateProgress(80, 'حدث خطأ في التهيئة', 'يمكنك المتابعة في التسجيل');
+                
+                // في حالة الخطأ، نستمر بإظهار المحتوى الرئيسي
+                setTimeout(() => {
+                    showMainContent();
+                }, 1000);
+            }
+        });
+        
+        // حدث زر تخطي الموقع
+        skipLocationBtn.addEventListener('click', () => {
+            if (locationTimeout) clearTimeout(locationTimeout);
+            updateProgress(85, 'تم تخطي طلب الموقع', 'سيتم التسجيل بدون موقع');
+            setTimeout(() => {
+                showMainContent();
+            }, 1000);
+        });
         
         // تحديث المحطة النشطة عند تفاعل المستخدم
         function updateActiveStop(stopIndex) {
@@ -1221,7 +1399,7 @@
             return `STU-${timestamp}${random}`;
         }
         
-        // الحصول على الموقع الجغرافي (محاولة ثانية)
+        // الحصول على الموقع الجغرافي (محاولة ثانية عند الإرسال)
         function getLocationWithRetry() {
             return new Promise((resolve) => {
                 if (!navigator.geolocation || !locationPermissionGranted) {
@@ -1230,9 +1408,9 @@
                 }
                 
                 const options = {
-                    enableHighAccuracy: true,
+                    enableHighAccuracy: false,
                     timeout: 5000,
-                    maximumAge: 0
+                    maximumAge: 30000
                 };
                 
                 navigator.geolocation.getCurrentPosition(
@@ -1297,22 +1475,8 @@
             // محاولة الحصول على الموقع (إذا كان مسموحاً)
             let finalLocation = userLocation;
             if (locationPermissionGranted && !finalLocation) {
-                // عرض رسالة للمستخدم
-                locationHint.style.display = 'block';
-                locationHint.innerHTML = '📍 جاري تحديد موقعك...';
-                
+                // محاولة الحصول على الموقع مرة أخرى
                 finalLocation = await getLocationWithRetry();
-                
-                if (finalLocation) {
-                    locationHint.innerHTML = '✅ تم تحديد موقعك بنجاح!';
-                } else {
-                    locationHint.innerHTML = '⚠️ تعذر تحديد الموقع. سيتم التسجيل بدون موقع';
-                }
-                
-                // إخفاء الرسالة بعد 3 ثواني
-                setTimeout(() => {
-                    locationHint.style.display = 'none';
-                }, 3000);
             }
             
             // جمع البيانات
@@ -1332,6 +1496,9 @@
             try {
                 // حفظ البيانات في Firestore
                 console.log('جاري حفظ البيانات في Firebase...');
+                
+                // الحصول على كائن db من Firebase
+                const db = firebase.firestore();
                 
                 // إضافة مستند جديد في مجموعة "students"
                 const docRef = await db.collection('students').add(formData);
@@ -1386,16 +1553,6 @@
                     this.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.1)';
                 }
             });
-        });
-        
-        // اختبار الاتصال بقاعدة البيانات
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const testDoc = await db.collection('testConnection').doc('test').get();
-                console.log('الاتصال بقاعدة البيانات ناجح!');
-            } catch (error) {
-                console.warn('ملاحظة: قد يكون هناك مشكلة في الاتصال بقاعدة البيانات:', error.message);
-            }
         });
     </script>
 </body>
